@@ -21,6 +21,8 @@
     "compile:zk": "hardhat compile && hardhat deploy-zksync --script compile-zk.ts",
     "verify": "ts-node scripts/verify.ts",
     "verify:new-chain-request": "ts-node scripts/new-chain.ts",
+    "add:predeployment": "ts-node scripts/add-predeployment.ts",
+    "postadd:predeployment": "npm run fmt",
     "status": "ts-node scripts/status.ts",
     "submit": "ts-node scripts/submit.ts",
     "estimate": "ts-node scripts/estimate.ts",
