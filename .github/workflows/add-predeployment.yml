@@ -64,7 +64,7 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Add pre-deployment artifact
         id: add
@@ -94,18 +94,18 @@ jobs:
           title: "feat: Add pre-deployment artifact for chain ${{ inputs.chain_id }}"
           body: |
             ## Summary
-            
+
             This PR adds the pre-deployment artifact for chain ID **${{ inputs.chain_id }}**.
-            
+
             ### What is a pre-deployment?
-            
+
             OP Stack networks and ZKsync based networks with the [EVM bytecode interpreter](https://docs.zksync.io/zksync-era/unique-features/evm-interpreter/evm-interpreter) include the Safe Singleton Factory as a pre-installed contract, meaning that there is no need to deploy it.
-            
+
             ### Verification
-            
+
             ${{ inputs.rpc_url && format('- ✅ Factory verified on-chain via RPC: `{0}`', inputs.rpc_url) || '- ⚠️ No RPC URL provided for on-chain verification' }}
             ${{ inputs.skip_chainlist_check && '- ⚠️ Chainlist verification was skipped' || '- ✅ Chain is listed in chainlist' }}
-            
+
             ---
             *This PR was automatically created by the [Add Pre-deployment workflow](https://github.com/${{ github.repository }}/actions/workflows/add-predeployment.yml).*
           branch: "add-predeployment-${{ inputs.chain_id }}"
@@ -120,4 +120,3 @@ jobs:
           echo "### ✅ Pull Request Created" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "PR #${{ steps.create-pr.outputs.pull-request-number }}: ${{ steps.create-pr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
-
