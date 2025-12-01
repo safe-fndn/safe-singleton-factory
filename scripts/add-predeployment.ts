@@ -41,7 +41,7 @@ async function addPredeployment() {
 				error instanceof PredeploymentError
 					? error.comment
 					: `**⛔️ Error:**<br>` +
-						`Unexpected error adding pre-deployment.<br>Error Details: ${error}`,
+					`Unexpected error adding pre-deployment.<br>Error Details: ${error}`,
 			success: false,
 		};
 	} finally {
@@ -182,9 +182,9 @@ class PredeploymentError extends Error {
 		return new PredeploymentError(
 			"Chain not listed",
 			`**⛔️ Error:**<br>` +
-				`Chain ${chainId} is not listed in the chainlist.<br>` +
-				`For more information on how to add a chain, please refer to the [chainlist documentation](https://github.com/DefiLlama/chainlist?tab=readme-ov-file#add-a-chain).<br>` +
-				`Set SKIP_CHAINLIST_CHECK=true to bypass this check.`,
+			`Chain ${chainId} is not listed in the chainlist.<br>` +
+			`For more information on how to add a chain, please refer to the [chainlist documentation](https://github.com/DefiLlama/chainlist?tab=readme-ov-file#add-a-chain).<br>` +
+			`Set SKIP_CHAINLIST_CHECK=true to bypass this check.`,
 		);
 	}
 
@@ -192,7 +192,7 @@ class PredeploymentError extends Error {
 		return new PredeploymentError(
 			"Chain ID mismatch",
 			`**⛔️ Error:**<br>` +
-				`Chain ID mismatch. Expected ${expected}, but RPC returned ${actual}.`,
+			`Chain ID mismatch. Expected ${expected}, but RPC returned ${actual}.`,
 		);
 	}
 
@@ -200,8 +200,8 @@ class PredeploymentError extends Error {
 		return new PredeploymentError(
 			"Factory not deployed",
 			`**⛔️ Error:**<br>` +
-				`The Safe Singleton Factory is not deployed at ${ADDRESS}.<br>` +
-				`This chain may not have the factory pre-installed.`,
+			`The Safe Singleton Factory is not deployed at ${ADDRESS}.<br>` +
+			`This chain may not have the factory pre-installed.`,
 		);
 	}
 
@@ -209,8 +209,8 @@ class PredeploymentError extends Error {
 		return new PredeploymentError(
 			"Factory different bytecode",
 			`**⛔️ Error:**<br>` +
-				`The contract at ${ADDRESS} has different bytecode than expected.<br>` +
-				`This may not be the Safe Singleton Factory.`,
+			`The contract at ${ADDRESS} has different bytecode than expected.<br>` +
+			`This may not be the Safe Singleton Factory.`,
 		);
 	}
 }
