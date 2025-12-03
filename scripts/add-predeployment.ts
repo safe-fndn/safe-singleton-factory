@@ -35,7 +35,7 @@ async function addPredeployment() {
 	} catch (error) {
 		summary = {
 			message:
-				error instanceof PredeploymentError
+				error instanceof Error
 					? error.message
 					: `Unexpected error adding pre-deployment. Error Details: ${error}`,
 			success: false,
@@ -56,14 +56,14 @@ async function verifyAndAddPredeployment() {
 	// Get chain ID from environment
 	const chainIdStr = process.env.CHAIN_ID;
 	if (!chainIdStr) {
-		throw new PredeploymentError(
+		throw new Error(
 			"Chain ID not provided. Please set the CHAIN_ID environment variable.",
 		);
 	}
 
 	const chainId = parseInt(chainIdStr, 10);
 	if (isNaN(chainId) || chainId <= 0) {
-		throw new PredeploymentError(
+		throw new Error(
 			`Invalid chain ID: "${chainIdStr}". Chain ID must be a positive integer.`,
 		);
 	}
@@ -73,16 +73,14 @@ async function verifyAndAddPredeployment() {
 	const artifactPath = path.join(artifactDir, "deployment.json");
 
 	if (fs.existsSync(artifactPath)) {
-		throw new PredeploymentError(
-			`Artifact already exists for chain ID ${chainId}.`,
-		);
+		throw new Error(`Artifact already exists for chain ID ${chainId}.`);
 	}
 
 	// Verify chain is in chainlist
 	const chainlist = await fetchChainlist();
 	const chainData = chainlist.find((item) => item.chainId === chainId);
 	if (!chainData) {
-		throw new PredeploymentError(
+		throw new Error(
 			`Chain ${chainId} is not listed in the chainlist. For more information on how to add a chain, please refer to the chainlist documentation: https://github.com/DefiLlama/chainlist?tab=readme-ov-file#add-a-chain`,
 		);
 	}
@@ -118,7 +116,7 @@ async function verifyPredeployment(rpcUrl: string, expectedChainId: number) {
 	// Verify chain ID matches
 	const { chainId } = await provider.getNetwork();
 	if (chainId !== expectedChainId) {
-		throw new PredeploymentError(
+		throw new Error(
 			`Chain ID mismatch. Expected ${expectedChainId}, but RPC returned ${chainId}.`,
 		);
 	}
@@ -126,7 +124,7 @@ async function verifyPredeployment(rpcUrl: string, expectedChainId: number) {
 	// Verify factory is deployed at the expected address
 	const code = await provider.getCode(ADDRESS);
 	if (ethers.utils.hexDataLength(code) === 0) {
-		throw new PredeploymentError(
+		throw new Error(
 			`The Safe Singleton Factory is not deployed at ${ADDRESS}. This chain may not have the factory pre-installed.`,
 		);
 	}
@@ -134,7 +132,7 @@ async function verifyPredeployment(rpcUrl: string, expectedChainId: number) {
 	// Verify bytecode matches
 	const codehash = ethers.utils.keccak256(code);
 	if (codehash !== CODEHASH) {
-		throw new PredeploymentError(
+		throw new Error(
 			`The contract at ${ADDRESS} has different bytecode than expected. This may not be the Safe Singleton Factory.`,
 		);
 	}
@@ -174,13 +172,6 @@ function getRpcFromChainData(chainData: ChainData): string | null {
 	}
 
 	return null;
-}
-
-class PredeploymentError extends Error {
-	constructor(message: string) {
-		super(message);
-		this.name = "PredeploymentError";
-	}
 }
 
 runScript(addPredeployment);
