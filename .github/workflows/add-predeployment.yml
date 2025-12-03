@@ -8,15 +8,6 @@ on:
         description: "The chain ID for the pre-deployed network"
         required: true
         type: string
-      rpc_url:
-        description: "RPC URL to verify the deployment (optional)"
-        required: false
-        type: string
-      skip_chainlist_check:
-        description: "Skip chainlist verification"
-        required: false
-        type: boolean
-        default: false
     outputs:
       success:
         description: "Whether the pre-deployment was added successfully"
@@ -35,15 +26,6 @@ on:
         description: "The chain ID for the pre-deployed network"
         required: true
         type: string
-      rpc_url:
-        description: "RPC URL to verify the deployment (optional)"
-        required: false
-        type: string
-      skip_chainlist_check:
-        description: "Skip chainlist verification"
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -64,19 +46,17 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Add pre-deployment artifact
         id: add
         env:
           CHAIN_ID: ${{ inputs.chain_id }}
-          RPC: ${{ inputs.rpc_url }}
-          SKIP_CHAINLIST_CHECK: ${{ inputs.skip_chainlist_check }}
           SUMMARY_FILE: summary.json
         run: |
-          npm run add:predeployment || true
+          npm run add-predeployment || true
           echo "success=$(jq -r '.success' $SUMMARY_FILE)" >> $GITHUB_OUTPUT
-          echo "message=$(jq -r '.commentOutput' $SUMMARY_FILE)" >> $GITHUB_OUTPUT
+          echo "message=$(jq -r '.message' $SUMMARY_FILE)" >> $GITHUB_OUTPUT
 
       - name: Check result
         if: steps.add.outputs.success != 'true'
@@ -103,8 +83,9 @@ jobs:
 
             ### Verification
 
-            ${{ inputs.rpc_url && format('- ✅ Factory verified on-chain via RPC: `{0}`', inputs.rpc_url) || '- ⚠️ No RPC URL provided for on-chain verification' }}
-            ${{ inputs.skip_chainlist_check && '- ⚠️ Chainlist verification was skipped' || '- ✅ Chain is listed in chainlist' }}
+            - Chain is listed in chainlist
+            - RPC URL automatically fetched from chainlist
+            - Factory verified on-chain (if RPC available)
 
             ---
             *This PR was automatically created by the [Add Pre-deployment workflow](https://github.com/${{ github.repository }}/actions/workflows/add-predeployment.yml).*
